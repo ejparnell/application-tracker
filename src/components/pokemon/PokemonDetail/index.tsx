@@ -1,0 +1,1 @@
+// Detailed Pokemon view

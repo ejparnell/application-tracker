@@ -1,0 +1,1 @@
+// GET /api/user/pokemon

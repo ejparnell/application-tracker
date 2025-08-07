@@ -1,0 +1,87 @@
+# Dependencies
+node_modules/
+.next/
+.vercel/
+
+# Build outputs
+dist/
+build/
+out/
+
+# Assets and public files
+public/
+src/assets/
+
+# Environment files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Images and media files
+*.jpg
+*.jpeg
+*.png
+*.gif
+*.bmp
+*.svg
+*.ico
+*.webp
+*.mp4
+*.mp3
+*.wav
+*.avi
+*.mov
+
+# Fonts
+*.woff
+*.woff2
+*.ttf
+*.otf
+*.eot
+
+# Lock files
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Generated files
+*.min.js
+*.min.css
+
+# Documentation that should preserve formatting
+CHANGELOG.md
+LICENSE
+
+# Git files
+.gitignore
+
+# IDE files
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Database files
+*.db
+*.sqlite
+
+# Certificates and keys
+*.pem
+*.key
+*.crt
+
+# Compressed files
+*.zip
+*.tar.gz
+*.rar
+*.7z
