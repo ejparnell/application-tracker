@@ -1,0 +1,27 @@
+.dashboard {
+  padding: var(--spacing-300);
+  max-width: var(--container-large);
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-400);
+  min-height: 100vh;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-100);
+}
+
+.subtitle {
+  margin-top: var(--spacing-100);
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .dashboard {
+    padding: var(--spacing-200);
+    gap: var(--spacing-300);
+  }
+}

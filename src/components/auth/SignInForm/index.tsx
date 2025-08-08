@@ -5,14 +5,23 @@ import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { signinAction } from '@/actions/auth';
 import { ActionState } from '@/types/auth';
+import Input from '@/components/ui/Input';
+import Button from '@/components/ui/Button';
+import Text from '@/components/ui/Text';
+import Link from 'next/link';
+import Form from '@/components/ui/Form';
 
 const initialState: ActionState = {
     success: false,
-    fieldErrors: {}
+    error: undefined,
+    fieldErrors: {},
 };
 
 export default function SignInForm() {
-    const [state, formAction, isPending] = useActionState(signinAction, initialState);
+    const [state, formAction, isPending] = useActionState(
+        signinAction,
+        initialState
+    );
     const router = useRouter();
 
     useEffect(() => {
@@ -32,66 +41,43 @@ export default function SignInForm() {
     }, [state.success, state.email, state.password, router]);
 
     return (
-        <div>
-            <form action={formAction}>
-                <h2>Sign In</h2>
-                
+            <Form action={formAction}>
+                <Text as="h2" variant="h2">
+                    Sign In
+                </Text>
+
                 {state?.error && !state.success && (
-                    <div role="alert">
-                        {state.error}
-                    </div>
+                    <div role="alert">{state.error}</div>
                 )}
 
-                <div>
-                    <label htmlFor="email">
-                        Email
-                    </label>
-                    <input
-                        type="email"
-                        id="email"
-                        name="email"
-                        required
-                        disabled={isPending}
-                    />
-                    {state?.fieldErrors?.email && (
-                        <span role="alert">
-                            {state.fieldErrors.email}
-                        </span>
-                    )}
-                </div>
-
-                <div>
-                    <label htmlFor="password">
-                        Password
-                    </label>
-                    <input
-                        type="password"
-                        id="password"
-                        name="password"
-                        required
-                        disabled={isPending}
-                    />
-                    {state?.fieldErrors?.password && (
-                        <span role="alert">
-                            {state.fieldErrors.password}
-                        </span>
-                    )}
-                </div>
-
-                <button
-                    type="submit"
+                <Input
+                    type="email"
+                    id="email"
+                    name="email"
+                    label="Email"
+                    required
                     disabled={isPending}
-                >
-                    {isPending ? 'Signing In...' : 'Sign In'}
-                </button>
+                    error={state?.fieldErrors?.email}
+                />
 
-                <p>
+                <Input
+                    type="password"
+                    id="password"
+                    name="password"
+                    label="Password"
+                    required
+                    disabled={isPending}
+                    error={state?.fieldErrors?.password}
+                />
+
+                <Button type="submit" disabled={isPending}>
+                    {isPending ? 'Signing In...' : 'Sign In'}
+                </Button>
+
+                <Text as="p" variant="body-small">
                     Don&apos;t have an account?{' '}
-                    <a href="/signup">
-                        Create account
-                    </a>
-                </p>
-            </form>
-        </div>
+                    <Link href="/register">Create account</Link>
+                </Text>
+            </Form>
     );
 }

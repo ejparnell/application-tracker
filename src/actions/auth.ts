@@ -5,9 +5,12 @@ import { ZodError } from 'zod';
 import { dbConnect } from '@/lib/database';
 import { User } from '@/models/user';
 import { registerSchema, loginSchema } from '@/utils/schemas/auth-schema';
-import { ActionState } from '@/types/auth';
+import { ActionState } from '../types/auth';
 
-export async function registerAction(prevState: ActionState | null, formData: FormData): Promise<ActionState> {
+export async function registerAction(
+    prevState: ActionState | null,
+    formData: FormData
+): Promise<ActionState> {
     try {
         const email = formData.get('email') as string;
         const password = formData.get('password') as string;
@@ -26,7 +29,7 @@ export async function registerAction(prevState: ActionState | null, formData: Fo
             return {
                 success: false,
                 error: 'User with this email already exists',
-                fieldErrors: {}
+                fieldErrors: {},
             };
         }
 
@@ -39,9 +42,8 @@ export async function registerAction(prevState: ActionState | null, formData: Fo
             success: true,
             email: validatedData.email,
             password: validatedData.password,
-            fieldErrors: {}
+            fieldErrors: {},
         };
-
     } catch (error) {
         if (error instanceof ZodError) {
             const fieldErrors: Record<string, string> = {};
@@ -53,7 +55,7 @@ export async function registerAction(prevState: ActionState | null, formData: Fo
             return {
                 success: false,
                 error: 'Validation failed',
-                fieldErrors
+                fieldErrors,
             };
         }
 
@@ -61,12 +63,15 @@ export async function registerAction(prevState: ActionState | null, formData: Fo
         return {
             success: false,
             error: 'An error occurred during registration',
-            fieldErrors: {}
+            fieldErrors: {},
         };
     }
 }
 
-export async function signinAction(prevState: ActionState | null, formData: FormData): Promise<ActionState> {
+export async function signinAction(
+    prevState: ActionState | null,
+    formData: FormData
+): Promise<ActionState> {
     try {
         const email = formData.get('email') as string;
         const password = formData.get('password') as string;
@@ -78,21 +83,26 @@ export async function signinAction(prevState: ActionState | null, formData: Form
 
         await dbConnect();
 
-        const user = await User.findOne({ email: validatedData.email }).select('+password');
+        const user = await User.findOne({ email: validatedData.email }).select(
+            '+password'
+        );
         if (!user) {
             return {
                 success: false,
                 error: 'Invalid email or password',
-                fieldErrors: {}
+                fieldErrors: {},
             };
         }
 
-        const isValidPassword = await bcrypt.compare(validatedData.password, user.password);
+        const isValidPassword = await bcrypt.compare(
+            validatedData.password,
+            user.password
+        );
         if (!isValidPassword) {
             return {
                 success: false,
                 error: 'Invalid email or password',
-                fieldErrors: {}
+                fieldErrors: {},
             };
         }
 
@@ -100,9 +110,8 @@ export async function signinAction(prevState: ActionState | null, formData: Form
             success: true,
             email: validatedData.email,
             password: validatedData.password,
-            fieldErrors: {}
+            fieldErrors: {},
         };
-
     } catch (error) {
         if (error instanceof ZodError) {
             const fieldErrors: Record<string, string> = {};
@@ -114,7 +123,7 @@ export async function signinAction(prevState: ActionState | null, formData: Form
             return {
                 success: false,
                 error: 'Validation failed',
-                fieldErrors
+                fieldErrors,
             };
         }
 
@@ -122,7 +131,7 @@ export async function signinAction(prevState: ActionState | null, formData: Form
         return {
             success: false,
             error: 'An error occurred during sign in',
-            fieldErrors: {}
+            fieldErrors: {},
         };
     }
 }

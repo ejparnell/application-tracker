@@ -1,1 +1,68 @@
-/* Button styles */
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: var(--border-radius-100);
+  font-family: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  outline: none;
+}
+
+.button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.button:focus-visible {
+  box-shadow: var(--shadow-focus);
+}
+
+.small {
+  padding: var(--spacing-100) var(--spacing-200);
+  font-size: var(--font-size-100);
+  min-height: var(--spacing-400);
+}
+
+.medium {
+  padding: var(--spacing-150) var(--spacing-300);
+  font-size: var(--font-size-150);
+  min-height: var(--spacing-600);
+}
+
+.large {
+  padding: var(--spacing-200) var(--spacing-400);
+  font-size: var(--font-size-200);
+  min-height: var(--spacing-700);
+}
+
+.primary {
+  background-color: var(--purple-200);
+  color: white;
+}
+
+.primary:hover:not(:disabled) {
+  background-color: var(--purple-100);
+}
+
+.secondary {
+  background-color: var(--grey-100);
+  color: var(--primaryFontColor);
+  border: 1px solid var(--grey-300);
+}
+
+.secondary:hover:not(:disabled) {
+  background-color: var(--grey-300);
+}
+
+.danger {
+  background-color: var(--red-300);
+  color: white;
+}
+
+.danger:hover:not(:disabled) {
+  background-color: var(--red-200);
+}

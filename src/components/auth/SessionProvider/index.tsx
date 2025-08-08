@@ -5,14 +5,17 @@ import { Session } from 'next-auth';
 import { ReactNode } from 'react';
 
 interface SessionProviderProps {
-  children: ReactNode;
-  session?: Session | null;
+    children: ReactNode;
+    session?: Session | null;
 }
 
-export default function SessionProvider({ children, session }: SessionProviderProps) {
-  return (
-    <NextAuthSessionProvider session={session}>
-      {children}
-    </NextAuthSessionProvider>
-  );
+export default function SessionProvider({
+    children,
+    session,
+}: SessionProviderProps) {
+    return (
+        <NextAuthSessionProvider session={session}>
+            {children}
+        </NextAuthSessionProvider>
+    );
 }

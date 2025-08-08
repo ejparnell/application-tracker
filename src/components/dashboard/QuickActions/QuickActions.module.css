@@ -1,1 +1,93 @@
-/* Actions styles */
+.quickActions {
+  background: white;
+  border-radius: var(--border-radius-100);
+  padding: var(--spacing-300);
+  box-shadow: var(--shadow-small);
+}
+
+.title {
+  margin-bottom: var(--spacing-300);
+  color: var(--primaryFontColor);
+}
+
+.actionGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--spacing-200);
+  margin-bottom: var(--spacing-300);
+}
+
+.actionButton {
+  min-height: var(--spacing-700);
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.actionButton:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-medium);
+}
+
+.actionButton:disabled {
+  transform: none;
+  box-shadow: var(--shadow-small);
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.importResult {
+  margin-top: var(--spacing-300);
+  animation: slideDown 0.3s ease;
+}
+
+.resultCard {
+  padding: var(--spacing-200);
+  border-radius: var(--border-radius-100);
+  border-left: 4px solid;
+}
+
+.resultCard.success {
+  background-color: rgba(51, 214, 159, 0.1);
+  border-left-color: var(--green);
+}
+
+.resultCard.error {
+  background-color: rgba(236, 87, 87, 0.1);
+  border-left-color: var(--red-300);
+}
+
+.resultStats {
+  margin-top: var(--spacing-100);
+}
+
+.errorList {
+  margin-top: var(--spacing-150);
+}
+
+.errorItem {
+  display: block;
+  margin-top: var(--spacing-050);
+  padding-left: var(--spacing-100);
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .actionGrid {
+    grid-template-columns: 1fr;
+  }
+  
+  .quickActions {
+    padding: var(--spacing-200);
+  }
+}

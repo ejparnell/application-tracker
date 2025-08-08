@@ -50,18 +50,18 @@ Pokemon collection:
                                                         │ id (PK)         │
                                                         │ userId (FK)     │
                                                         │ pokemonId (FK)  │
-                                                        │ nickname        │  
-                                                        │ level           │  
-                                                        │ caughtAt        │  
-                                                        │ createdAt       │  
-                                                        │ updatedAt       │  
-                                                        └─────────────────┘  
-                                                                             
-Relationships:                                                               
-- User has many Applications (1:N)                                         
-- User has many UserPokemon (1:N)                                          
-- Pokemon has many UserPokemon (1:N)                                       
-- UserPokemon belongs to User and Pokemon (N:1)                           
+                                                        │ nickname        │
+                                                        │ level           │
+                                                        │ caughtAt        │
+                                                        │ createdAt       │
+                                                        │ updatedAt       │
+                                                        └─────────────────┘
+
+Relationships:
+- User has many Applications (1:N)
+- User has many UserPokemon (1:N)
+- Pokemon has many UserPokemon (1:N)
+- UserPokemon belongs to User and Pokemon (N:1)
 ```
 
 ### User Model
@@ -156,100 +156,100 @@ Relationships:
 
 ### Authentication Routes (NextAuth)
 
-| Method | Endpoint | Description | Request Body | Response |
-|--------|----------|-------------|--------------|----------|
-| GET/POST | `/api/auth/[...nextauth]` | NextAuth handlers (signin, signout, callback, etc.) | Varies | NextAuth responses |
-| GET | `/api/auth/session` | Get current session | - | `{ user, expires }` |
-| GET | `/api/auth/csrf` | Get CSRF token | - | `{ csrfToken }` |
-| GET | `/api/auth/providers` | Get configured providers | - | `{ providers }` |
-| POST | `/api/auth/signin` | Sign in with credentials/providers | `{ email, password }` or provider data | Redirect or session |
-| POST | `/api/auth/signout` | Sign out user | `{ csrfToken }` | Redirect |
-| POST | `/api/auth/callback/credentials` | Credentials callback | `{ email, password }` | Session or error |
+| Method   | Endpoint                         | Description                                         | Request Body                           | Response            |
+| -------- | -------------------------------- | --------------------------------------------------- | -------------------------------------- | ------------------- |
+| GET/POST | `/api/auth/[...nextauth]`        | NextAuth handlers (signin, signout, callback, etc.) | Varies                                 | NextAuth responses  |
+| GET      | `/api/auth/session`              | Get current session                                 | -                                      | `{ user, expires }` |
+| GET      | `/api/auth/csrf`                 | Get CSRF token                                      | -                                      | `{ csrfToken }`     |
+| GET      | `/api/auth/providers`            | Get configured providers                            | -                                      | `{ providers }`     |
+| POST     | `/api/auth/signin`               | Sign in with credentials/providers                  | `{ email, password }` or provider data | Redirect or session |
+| POST     | `/api/auth/signout`              | Sign out user                                       | `{ csrfToken }`                        | Redirect            |
+| POST     | `/api/auth/callback/credentials` | Credentials callback                                | `{ email, password }`                  | Session or error    |
 
 ### User Management Routes
 
-| Method | Endpoint | Description | Request Body | Response |
-|--------|----------|-------------|--------------|----------|
-| POST | `/api/users/register` | Create new user account | `{ email, password, firstName, lastName }` | `{ user }` |
-| GET | `/api/users/profile` | Get user profile | - | `{ user }` |
-| PUT | `/api/users/profile` | Update user profile | `{ firstName, lastName, profilePicture }` | `{ user }` |
-| DELETE | `/api/users/account` | Delete user account | - | `{ message }` |
+| Method | Endpoint              | Description             | Request Body                               | Response      |
+| ------ | --------------------- | ----------------------- | ------------------------------------------ | ------------- |
+| POST   | `/api/users/register` | Create new user account | `{ email, password, firstName, lastName }` | `{ user }`    |
+| GET    | `/api/users/profile`  | Get user profile        | -                                          | `{ user }`    |
+| PUT    | `/api/users/profile`  | Update user profile     | `{ firstName, lastName, profilePicture }`  | `{ user }`    |
+| DELETE | `/api/users/account`  | Delete user account     | -                                          | `{ message }` |
 
 ### Application Routes
 
-| Method | Endpoint | Description | Request Body | Response |
-|--------|----------|-------------|--------------|----------|
-| GET | `/api/applications` | Get all user applications | - | `{ applications }` |
-| GET | `/api/applications/:id` | Get specific application | - | `{ application }` |
-| POST | `/api/applications` | Create new application | `{ title, company, location, jobUrl, salary }` | `{ application }` |
-| PUT | `/api/applications/:id` | Update application | `{ title, company, location, jobUrl, salary, status, notes }` | `{ application }` |
-| DELETE | `/api/applications/:id` | Delete application | - | `{ message }` |
-| POST | `/api/applications/:id/generate-resume` | Generate AI resume | `{ jobDescription }` | `{ resumeContent }` |
-| POST | `/api/applications/:id/generate-cover-letter` | Generate AI cover letter | `{ jobDescription }` | `{ coverLetter }` |
-| PUT | `/api/applications/:id/status` | Update application status | `{ status }` | `{ application }` |
+| Method | Endpoint                                      | Description               | Request Body                                                  | Response            |
+| ------ | --------------------------------------------- | ------------------------- | ------------------------------------------------------------- | ------------------- |
+| GET    | `/api/applications`                           | Get all user applications | -                                                             | `{ applications }`  |
+| GET    | `/api/applications/:id`                       | Get specific application  | -                                                             | `{ application }`   |
+| POST   | `/api/applications`                           | Create new application    | `{ title, company, location, jobUrl, salary }`                | `{ application }`   |
+| PUT    | `/api/applications/:id`                       | Update application        | `{ title, company, location, jobUrl, salary, status, notes }` | `{ application }`   |
+| DELETE | `/api/applications/:id`                       | Delete application        | -                                                             | `{ message }`       |
+| POST   | `/api/applications/:id/generate-resume`       | Generate AI resume        | `{ jobDescription }`                                          | `{ resumeContent }` |
+| POST   | `/api/applications/:id/generate-cover-letter` | Generate AI cover letter  | `{ jobDescription }`                                          | `{ coverLetter }`   |
+| PUT    | `/api/applications/:id/status`                | Update application status | `{ status }`                                                  | `{ application }`   |
 
 ### Pokemon Routes
 
-| Method | Endpoint | Description | Request Body | Response |
-|--------|----------|-------------|--------------|----------|
-| GET | `/api/pokemon` | Get all available Pokemon | - | `{ pokemon }` |
-| GET | `/api/pokemon/:id` | Get specific Pokemon details | - | `{ pokemon }` |
-| GET | `/api/pokemon/random` | Get random Pokemon for catching | - | `{ pokemon }` |
-| POST | `/api/pokemon/catch` | Catch a Pokemon | `{ pokemonId, nickname? }` | `{ userPokemon }` |
+| Method | Endpoint              | Description                     | Request Body               | Response          |
+| ------ | --------------------- | ------------------------------- | -------------------------- | ----------------- |
+| GET    | `/api/pokemon`        | Get all available Pokemon       | -                          | `{ pokemon }`     |
+| GET    | `/api/pokemon/:id`    | Get specific Pokemon details    | -                          | `{ pokemon }`     |
+| GET    | `/api/pokemon/random` | Get random Pokemon for catching | -                          | `{ pokemon }`     |
+| POST   | `/api/pokemon/catch`  | Catch a Pokemon                 | `{ pokemonId, nickname? }` | `{ userPokemon }` |
 
 ### User Pokemon Routes
 
-| Method | Endpoint | Description | Request Body | Response |
-|--------|----------|-------------|--------------|----------|
-| GET | `/api/user/pokemon` | Get user's Pokemon collection | `?type=&rarity=&sort=` | `{ userPokemon }` |
-| GET | `/api/user/pokemon/:id` | Get specific user Pokemon | - | `{ userPokemon }` |
-| PUT | `/api/user/pokemon/:id` | Update Pokemon nickname | `{ nickname }` | `{ userPokemon }` |
-| DELETE | `/api/user/pokemon/:id` | Release Pokemon | - | `{ message }` |
-| POST | `/api/user/pokemon/:id/level-up` | Level up Pokemon | - | `{ userPokemon }` |
+| Method | Endpoint                         | Description                   | Request Body           | Response          |
+| ------ | -------------------------------- | ----------------------------- | ---------------------- | ----------------- |
+| GET    | `/api/user/pokemon`              | Get user's Pokemon collection | `?type=&rarity=&sort=` | `{ userPokemon }` |
+| GET    | `/api/user/pokemon/:id`          | Get specific user Pokemon     | -                      | `{ userPokemon }` |
+| PUT    | `/api/user/pokemon/:id`          | Update Pokemon nickname       | `{ nickname }`         | `{ userPokemon }` |
+| DELETE | `/api/user/pokemon/:id`          | Release Pokemon               | -                      | `{ message }`     |
+| POST   | `/api/user/pokemon/:id/level-up` | Level up Pokemon              | -                      | `{ userPokemon }` |
 
 ### Statistics Routes
 
-| Method | Endpoint | Description | Request Body | Response |
-|--------|----------|-------------|--------------|----------|
-| GET | `/api/stats/applications` | Get application statistics | - | `{ totalApplications, byStatus, monthlyTrend }` |
-| GET | `/api/stats/pokemon` | Get Pokemon collection stats | - | `{ totalCaught, byType, byRarity }` |
+| Method | Endpoint                  | Description                  | Request Body | Response                                        |
+| ------ | ------------------------- | ---------------------------- | ------------ | ----------------------------------------------- |
+| GET    | `/api/stats/applications` | Get application statistics   | -            | `{ totalApplications, byStatus, monthlyTrend }` |
+| GET    | `/api/stats/pokemon`      | Get Pokemon collection stats | -            | `{ totalCaught, byType, byRarity }`             |
 
 ## Frontend Routes
 
 ### Public Routes (No Authentication Required)
 
-| Route | Component | Description |
-|-------|-----------|-------------|
-| `/` | `HomePage` | Landing page with app overview and sign-up prompt |
-| `/signin` | `SignInPage` | NextAuth sign-in page with multiple providers |
-| `/signup` | `SignUpPage` | Custom user registration page |
-| `/auth/error` | `AuthErrorPage` | NextAuth error handling page |
+| Route         | Component       | Description                                       |
+| ------------- | --------------- | ------------------------------------------------- |
+| `/`           | `HomePage`      | Landing page with app overview and sign-up prompt |
+| `/signin`     | `SignInPage`    | NextAuth sign-in page with multiple providers     |
+| `/signup`     | `SignUpPage`    | Custom user registration page                     |
+| `/auth/error` | `AuthErrorPage` | NextAuth error handling page                      |
 
 ### Protected Routes (Authentication Required)
 
-| Route | Component | Description |
-|-------|-----------|-------------|
-| `/dashboard` | `DashboardPage` | Main dashboard with overview of applications and Pokemon |
-| `/applications` | `ApplicationsPage` | List view of all job applications |
-| `/applications/new` | `NewApplicationPage` | Form to add new job application |
-| `/applications/:id` | `ApplicationDetailPage` | Detailed view of specific application |
-| `/applications/:id/edit` | `EditApplicationPage` | Form to edit existing application |
-| `/pokemon` | `PokemonCollectionPage` | User's Pokemon collection with filtering |
-| `/pokemon/catch` | `CatchPokemonPage` | Pokemon catching game interface |
-| `/pokemon/:id` | `PokemonDetailPage` | Detailed view of specific Pokemon |
-| `/profile` | `ProfilePage` | User profile settings and information |
-| `/stats` | `StatsPage` | Analytics dashboard for applications and Pokemon |
+| Route                    | Component               | Description                                              |
+| ------------------------ | ----------------------- | -------------------------------------------------------- |
+| `/dashboard`             | `DashboardPage`         | Main dashboard with overview of applications and Pokemon |
+| `/applications`          | `ApplicationsPage`      | List view of all job applications                        |
+| `/applications/new`      | `NewApplicationPage`    | Form to add new job application                          |
+| `/applications/:id`      | `ApplicationDetailPage` | Detailed view of specific application                    |
+| `/applications/:id/edit` | `EditApplicationPage`   | Form to edit existing application                        |
+| `/pokemon`               | `PokemonCollectionPage` | User's Pokemon collection with filtering                 |
+| `/pokemon/catch`         | `CatchPokemonPage`      | Pokemon catching game interface                          |
+| `/pokemon/:id`           | `PokemonDetailPage`     | Detailed view of specific Pokemon                        |
+| `/profile`               | `ProfilePage`           | User profile settings and information                    |
+| `/stats`                 | `StatsPage`             | Analytics dashboard for applications and Pokemon         |
 
 ### NextAuth Routes (Handled by NextAuth)
 
-| Route | Description |
-|-------|-------------|
-| `/api/auth/signin` | Sign-in page with configured providers |
-| `/api/auth/signout` | Sign-out confirmation and processing |
-| `/api/auth/callback/*` | OAuth provider callbacks |
-| `/api/auth/csrf` | CSRF token endpoint |
-| `/api/auth/session` | Session data endpoint |
-| `/api/auth/providers` | Available auth providers |
+| Route                  | Description                            |
+| ---------------------- | -------------------------------------- |
+| `/api/auth/signin`     | Sign-in page with configured providers |
+| `/api/auth/signout`    | Sign-out confirmation and processing   |
+| `/api/auth/callback/*` | OAuth provider callbacks               |
+| `/api/auth/csrf`       | CSRF token endpoint                    |
+| `/api/auth/session`    | Session data endpoint                  |
+| `/api/auth/providers`  | Available auth providers               |
 
 ### Route Parameters and Query Strings
 
@@ -266,11 +266,13 @@ Relationships:
 ### Route Guards and Middleware
 
 **NextAuth Middleware:** Protects routes using NextAuth session validation in `middleware.ts`
+
 - Automatically redirects unauthenticated users to `/signin`
 - Protects all routes under `/dashboard`, `/applications`, `/pokemon`, `/profile`, and `/stats`
 - Handles session refresh and token validation
 
 **Auth Configuration:**
+
 - **Providers**: Email/Password, Google OAuth, GitHub OAuth (configurable)
 - **Session Strategy**: JWT tokens with secure httpOnly cookies
 - **CSRF Protection**: Built-in CSRF token validation

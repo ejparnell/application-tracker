@@ -1,0 +1,71 @@
+/* Base loading styles */
+.loading {
+  display: flex;
+  align-items: center;
+  font-family: inherit;
+  color: var(--secondaryFontColor);
+}
+
+.text {
+  margin-right: var(--spacing-050);
+}
+
+.dots {
+  display: inline-flex;
+}
+
+.dot {
+  opacity: 0;
+  animation: dotAnimation 1.5s infinite;
+}
+
+.dot:nth-child(1) {
+  animation-delay: 0s;
+}
+
+.dot:nth-child(2) {
+  animation-delay: 0.5s;
+}
+
+.dot:nth-child(3) {
+  animation-delay: 1s;
+}
+
+/* Dot animation keyframes */
+@keyframes dotAnimation {
+  0%, 20% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+/* Size variants */
+.small {
+  font-size: var(--font-size-100); /* 12px */
+}
+
+.medium {
+  font-size: var(--font-size-150); /* 14px */
+}
+
+.large {
+  font-size: var(--font-size-200); /* 16px */
+}
+
+/* Layout variants */
+.left {
+  justify-content: flex-start;
+}
+
+.center {
+  justify-content: center;
+}
+
+.right {
+  justify-content: flex-end;
+}

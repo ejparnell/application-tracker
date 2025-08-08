@@ -1,1 +1,80 @@
-/* Input styles */
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-100);
+}
+
+.label {
+  font-size: var(--font-size-150);
+  color: var(--secondaryFontColor);
+  font-weight: 500;
+}
+
+.inputWrapper {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+}
+
+.input {
+  width: 100%;
+  padding: var(--spacing-150) var(--spacing-200);
+  font-size: var(--font-size-200);
+  border: 1px solid var(--grey-300);
+  border-radius: var(--border-radius-100);
+  background-color: var(--backgroundColor);
+  color: var(--primaryFontColor);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--purple-100);
+  box-shadow: var(--shadow-focus);
+}
+
+.input:disabled {
+  background-color: var(--grey-100);
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.inputPassword {
+  padding-right: var(--spacing-500);
+}
+
+.toggleButton {
+  position: absolute;
+  right: var(--spacing-150);
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.2s ease;
+}
+
+.toggleButton:hover {
+  opacity: 0.7;
+}
+
+.toggleButton:focus {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+  border-radius: var(--border-radius-100);
+}
+
+.toggleIcon {
+  width: 20px;
+  height: 20px;
+}
+
+.error {
+  color: var(--error);
+  font-size: var(--font-size-100);
+  margin-top: var(--spacing-050);
+}

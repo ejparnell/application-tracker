@@ -1,0 +1,112 @@
+*,
+::before,
+::after,
+html,
+body {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html,
+body {
+    height: 100vh;
+    width: 100vw;
+    font-family: 'League Spartan', sans-serif;
+    background-color: var(--backgroundColor);
+    color: var(--primaryFontColor);
+}
+
+:root {
+    --backgroundColor: var(--grey-100);
+
+    --primaryFontColor: var(--black-900);
+    --secondaryFontColor: var(--grey-400);
+
+    --error: var(--red-300);
+    --success: var(--green);
+}
+
+:root {
+    --purple-200: #7C5DFA;
+    --purple-100: #9277FF;
+
+    --black-900: #0C0E16;
+
+    --blue-900: #1E2139;
+    --blue-800: #141625;
+    --blue-700: #252945;
+    
+    --red-300: #EC5757;
+    --red-200: #FF9797;
+
+    --grey-500: #888EB0;
+    --grey-400: #7E88C3;
+    --grey-300: #DFE3FA;
+    --grey-100: #F8F8FB;
+
+    --green: #33D69F;
+    --orange: #FF8F00;
+
+    /* Spacing - 8px grid system */
+    --spacing-050: 4px;
+    --spacing-100: 8px;
+    --spacing-150: 12px;
+    --spacing-200: 16px;
+    --spacing-250: 20px;
+    --spacing-300: 24px;
+    --spacing-350: 28px;
+    --spacing-400: 32px;
+    --spacing-450: 36px;
+    --spacing-500: 40px;
+    --spacing-600: 48px;
+    --spacing-700: 56px;
+    --spacing-800: 64px;
+    --spacing-900: 72px;
+    --spacing-1000: 80px;
+    --spacing-1200: 96px;
+    --spacing-1600: 128px;
+
+    /* Font sizes - 8px grid system */
+    --font-size-050: 8px;
+    --font-size-100: 12px;
+    --font-size-150: 14px;
+    --font-size-200: 16px;
+    --font-size-250: 18px;
+    --font-size-300: 20px;
+    --font-size-400: 24px;
+    --font-size-500: 28px;
+    --font-size-600: 32px;
+    --font-size-700: 36px;
+    --font-size-800: 40px;
+    --font-size-900: 48px;
+    --font-size-1000: 56px;
+    --font-size-1200: 64px;
+
+    /* Border radius - 8px grid system */
+    --border-radius-050: 4px;
+    --border-radius-100: 8px;
+    --border-radius-150: 12px;
+    --border-radius-200: 16px;
+    --border-radius-250: 20px;
+    --border-radius-300: 24px;
+
+    /* Box shadows */
+    --shadow-small: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+    --shadow-medium: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+    --shadow-large: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
+    --shadow-extra-large: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
+    --shadow-inset: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+    --shadow-focus: 0 0 0 3px rgba(124, 93, 250, 0.3);
+    --shadow-error: 0 0 0 3px rgba(236, 87, 87, 0.3);
+
+    /* Z-index levels */
+    --z-index-dropdown: 1000;
+    --z-index-modal: 1100;
+    --z-index-tooltip: 1200;
+
+    /* Container Sizes */
+    --container-small: 327px;
+    --container-medium: 640px;
+    --container-large: 1280px;
+}

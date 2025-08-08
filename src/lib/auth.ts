@@ -12,7 +12,7 @@ export const authOptions: NextAuthOptions = {
             name: 'credentials',
             credentials: {
                 email: { label: 'Email', type: 'email' },
-                password: { label: 'Password', type: 'password' }
+                password: { label: 'Password', type: 'password' },
             },
             async authorize(credentials) {
                 if (!credentials?.email || !credentials?.password) {
@@ -23,7 +23,9 @@ export const authOptions: NextAuthOptions = {
                     const { email, password } = loginSchema.parse(credentials);
                     await dbConnect();
 
-                    const user = await User.findOne({ email }).select('+password');
+                    const user = await User.findOne({ email }).select(
+                        '+password'
+                    );
                     if (!user) return null;
 
                     const match = await bcrypt.compare(
@@ -32,10 +34,10 @@ export const authOptions: NextAuthOptions = {
                     );
                     if (!match) return null;
 
-                    return { 
-                        id: user._id.toString(), 
-                        name: user.name || user.email.split('@')[0], 
-                        email: user.email 
+                    return {
+                        id: user._id.toString(),
+                        name: user.name || user.email.split('@')[0],
+                        email: user.email,
                     };
                 } catch (error) {
                     console.error('Auth error:', error);

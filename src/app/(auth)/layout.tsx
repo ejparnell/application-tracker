@@ -1,13 +1,10 @@
 import { ReactNode } from 'react';
+import styles from './layout.module.css';
 
 interface AuthLayoutProps {
-  children: ReactNode;
+    children: ReactNode;
 }
 
 export default function AuthLayout({ children }: AuthLayoutProps) {
-  return (
-    <div>
-      {children}
-    </div>
-  );
+    return <div className={styles.container}>{children}</div>;
 }
