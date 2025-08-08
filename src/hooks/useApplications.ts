@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Application, ApplicationsResponse, ApplicationStats } from '@/types/applications';
+import type { PokemonEncounter } from '@/models/pokemon';
 
 interface FilterState {
   status: string;
@@ -16,7 +17,7 @@ interface UseApplicationsReturn {
   error: string | null;
   filters: FilterState;
   setFilters: (filters: Partial<FilterState>) => void;
-  updateApplicationStatus: (applicationId: string, newStatus: string) => Promise<void>;
+  updateApplicationStatus: (applicationId: string, newStatus: string) => Promise<PokemonEncounter | null>;
   refreshApplications: () => Promise<void>;
 }
 
@@ -47,9 +48,11 @@ export default function useApplications(): UseApplicationsReturn {
   }, []);
 
   // Fetch filtered applications
-  const fetchFilteredApplications = useCallback(async () => {
+  const fetchFilteredApplications = useCallback(async (showLoading = true) => {
     try {
-      setLoading(true);
+      if (showLoading) {
+        setLoading(true);
+      }
       const params = new URLSearchParams();
       
       if (filters.status) params.append('status', filters.status);
@@ -72,7 +75,9 @@ export default function useApplications(): UseApplicationsReturn {
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');
     } finally {
-      setLoading(false);
+      if (showLoading) {
+        setLoading(false);
+      }
     }
   }, [filters]);
 
@@ -93,7 +98,7 @@ export default function useApplications(): UseApplicationsReturn {
     setFiltersState(prev => ({ ...prev, ...newFilters, page: 1 }));
   }, []);
 
-  const updateApplicationStatus = useCallback(async (applicationId: string, newStatus: string) => {
+  const updateApplicationStatus = useCallback(async (applicationId: string, newStatus: string): Promise<PokemonEncounter | null> => {
     try {
       const response = await fetch(`/api/applications/${applicationId}`, {
         method: 'PATCH',
@@ -107,11 +112,126 @@ export default function useApplications(): UseApplicationsReturn {
         throw new Error('Failed to update application');
       }
 
-      // Refresh both stats and applications
+      // Trigger Pokemon encounter if status is changed to 'applied'
+      let pokemonEncounter: PokemonEncounter | null = null;
+      if (newStatus === 'applied') {
+        console.log('🎮 Triggering Pokemon encounter for status change to applied');
+        try {
+          const pokemonResponse = await fetch('/api/pokemon/encounter', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          });
+          
+          console.log('🎮 Pokemon encounter response status:', pokemonResponse.status);
+          
+          if (pokemonResponse.ok) {
+            const encounterResult = await pokemonResponse.json();
+            console.log('🎮 Pokemon encounter result:', encounterResult);
+            
+            if (encounterResult.success && encounterResult.pokemonId) {
+              // Fetch Pokemon data from PokeAPI on frontend
+              console.log('🎮 Fetching Pokemon data for ID:', encounterResult.pokemonId);
+              try {
+                const pokemonDataResponse = await fetch(`https://pokeapi.co/api/v2/pokemon/${encounterResult.pokemonId}`);
+                if (pokemonDataResponse.ok) {
+                  const pokemonData = await pokemonDataResponse.json();
+                  console.log('🎮 Pokemon data fetched:', pokemonData.name);
+                  
+                  // Save the caught Pokemon to database
+                  const saveResponse = await fetch('/api/pokemon/save', {
+                    method: 'POST',
+                    headers: {
+                      'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                      pokemonId: encounterResult.pokemonId,
+                      pokemonData,
+                      encounterChance: encounterResult.encounterChance,
+                      streak: encounterResult.newStreak
+                    }),
+                  });
+                  
+                  if (saveResponse.ok) {
+                    const saveResult = await saveResponse.json();
+                    console.log('🎮 Pokemon saved successfully:', saveResult.pokemon.name);
+                    
+                    // Return the full encounter with Pokemon data
+                    pokemonEncounter = {
+                      success: true,
+                      pokemon: saveResult.pokemon,
+                      encounterChance: encounterResult.encounterChance,
+                      newStreak: encounterResult.newStreak
+                    };
+                  } else {
+                    // Failed to save Pokemon, but still show successful encounter
+                    pokemonEncounter = {
+                      success: true,
+                      pokemon: pokemonData,
+                      encounterChance: encounterResult.encounterChance,
+                      newStreak: encounterResult.newStreak
+                    };
+                  }
+                } else {
+                  console.error('🎮 Failed to fetch Pokemon data from PokeAPI');
+                  // Show encounter failed modal
+                  pokemonEncounter = {
+                    success: false,
+                    pokemon: null,
+                    encounterChance: encounterResult.encounterChance,
+                    newStreak: encounterResult.newStreak
+                  };
+                }
+              } catch (fetchError) {
+                console.error('🎮 Error fetching Pokemon data:', fetchError);
+                // Show encounter failed modal
+                pokemonEncounter = {
+                  success: false,
+                  pokemon: null,
+                  encounterChance: encounterResult.encounterChance,
+                  newStreak: encounterResult.newStreak
+                };
+              }
+            } else {
+              // No Pokemon encountered - still show modal
+              pokemonEncounter = {
+                success: false,
+                pokemon: null,
+                encounterChance: encounterResult.encounterChance,
+                newStreak: encounterResult.newStreak
+              };
+            }
+          } else {
+            const errorText = await pokemonResponse.text();
+            console.error('🎮 Pokemon encounter failed:', errorText);
+            // Show error modal with default values
+            pokemonEncounter = {
+              success: false,
+              pokemon: null,
+              encounterChance: 15, // Default base rate
+              newStreak: 1
+            };
+          }
+        } catch (pokemonError) {
+          console.error('🎮 Error triggering Pokemon encounter:', pokemonError);
+          // Show error modal with default values
+          pokemonEncounter = {
+            success: false,
+            pokemon: null,
+            encounterChance: 15, // Default base rate
+            newStreak: 1
+          };
+        }
+      }
+
+      // Refresh both stats and applications (without loading state)
       await Promise.all([
         fetchAllStats(),
-        fetchFilteredApplications()
+        fetchFilteredApplications(false)
       ]);
+
+      return pokemonEncounter;
     } catch (err) {
       console.error('Error updating application:', err);
       throw err;
@@ -121,7 +241,7 @@ export default function useApplications(): UseApplicationsReturn {
   const refreshApplications = useCallback(async () => {
     await Promise.all([
       fetchAllStats(),
-      fetchFilteredApplications()
+      fetchFilteredApplications(false)
     ]);
   }, [fetchAllStats, fetchFilteredApplications]);
 

@@ -21,9 +21,10 @@ export default function ApplicationList() {
 
   const handleStatusUpdate = async (applicationId: string, newStatus: string) => {
     try {
-      await updateApplicationStatus(applicationId, newStatus);
+      return await updateApplicationStatus(applicationId, newStatus);
     } catch (err) {
       console.error('Error updating application:', err);
+      return null;
     }
   };
 
