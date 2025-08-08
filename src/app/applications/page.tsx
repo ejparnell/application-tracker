@@ -4,7 +4,7 @@ import { Metadata } from 'next';
 import Link from 'next/link';
 import Text from '@/components/ui/Text';
 import Button from '@/components/ui/Button';
-import ApplicationList from '@/components/applications/ApplicationList';
+import ApplicationListWithPokemon from '@/components/applications/ApplicationListWithPokemon';
 import styles from './page.module.css';
 
 export const metadata: Metadata = {
@@ -52,7 +52,7 @@ export default async function ApplicationsPage() {
                 </Link>
             </header>
             
-            <ApplicationList />
+            <ApplicationListWithPokemon />
         </div>
     );
 }

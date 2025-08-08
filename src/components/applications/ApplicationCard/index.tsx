@@ -1,11 +1,10 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
 import Button from '@/components/ui/Button';
 import Text from '@/components/ui/Text';
 import StatusBadge from '@/components/applications/StatusBadge';
-import PokemonEncounterModal from '@/components/pokemon/PokemonEncounterModal';
 import { Application } from '@/types/applications';
 import type { PokemonEncounter } from '@/models/pokemon';
 import styles from './ApplicationCard.module.css';
@@ -18,15 +17,6 @@ interface ApplicationCardProps {
 
 export default function ApplicationCard({ application, onStatusUpdate }: ApplicationCardProps) {
   const [isUpdating, setIsUpdating] = useState(false);
-  const [pokemonEncounter, setPokemonEncounter] = useState<PokemonEncounter | null>(null);
-  const [showPokemonModal, setShowPokemonModal] = useState(false);
-
-  // Debug modal state changes
-  useEffect(() => {
-    if (showPokemonModal && pokemonEncounter) {
-      console.log('🎯 ApplicationCard: Modal should be visible now - showPokemonModal:', showPokemonModal, 'pokemonEncounter:', pokemonEncounter);
-    }
-  }, [showPokemonModal, pokemonEncounter]);
 
   const handleStatusUpdate = async (newStatus: string) => {
     if (!application._id) return;
@@ -36,26 +26,12 @@ export default function ApplicationCard({ application, onStatusUpdate }: Applica
     setIsUpdating(true);
     try {
       const encounter = await onStatusUpdate(application._id, newStatus);
-      
       console.log('🎯 ApplicationCard: Received encounter result:', encounter);
       
-      // Show Pokemon encounter modal if there was an encounter (success or failure)
-      if (encounter && newStatus === 'applied') {
-        console.log('🎯 ApplicationCard: Setting Pokemon encounter and showing modal');
-        setPokemonEncounter(encounter);
-        setShowPokemonModal(true);
-      } else {
-        console.log('🎯 ApplicationCard: No encounter to show or not applied status');
-      }
+      // The parent component (ApplicationListWithPokemon) will handle showing the modal
     } finally {
       setIsUpdating(false);
     }
-  };
-
-  const closePokemonModal = () => {
-    console.log('🎯 ApplicationCard: Closing Pokemon modal');
-    setShowPokemonModal(false);
-    setPokemonEncounter(null);
   };
 
   const handleViewJob = () => {
@@ -224,18 +200,6 @@ export default function ApplicationCard({ application, onStatusUpdate }: Applica
           </div>
         </div>
       </div>
-
-      {/* Pokemon Encounter Modal */}
-      {showPokemonModal && pokemonEncounter && (
-        <PokemonEncounterModal
-          isOpen={showPokemonModal}
-          onClose={closePokemonModal}
-          success={pokemonEncounter.success}
-          pokemon={pokemonEncounter.pokemon || undefined}
-          encounterChance={pokemonEncounter.encounterChance}
-          streak={pokemonEncounter.newStreak}
-        />
-      )}
     </>
   );
 }

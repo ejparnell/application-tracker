@@ -1,0 +1,54 @@
+/* ApplicationListWithPokemon styles */
+.applicationList {
+  width: 100%;
+}
+
+.loadingContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: var(--spacing-400);
+  min-height: 200px;
+}
+
+.errorContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--spacing-400);
+  text-align: center;
+  gap: var(--spacing-200);
+}
+
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-500);
+  text-align: center;
+  gap: var(--spacing-200);
+  min-height: 300px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: var(--spacing-300);
+  margin-top: var(--spacing-300);
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  padding: var(--spacing-400) 0;
+  margin-top: var(--spacing-300);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .grid {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-200);
+  }
+}

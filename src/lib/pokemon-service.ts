@@ -11,8 +11,10 @@ export class PokemonGamificationService {
 
   /**
    * Handles a job application and potential Pokemon encounter
+   * This method only calculates encounter rates and returns the encounter result
+   * Frontend will handle Pokemon selection from cached data
    */
-  static async handleJobApplication(userId: string): Promise<PokemonEncounter> {
+  static async triggerEncounter(userId: string): Promise<PokemonEncounter> {
     await dbConnect();
 
     // Update user stats
@@ -28,6 +30,8 @@ export class PokemonGamificationService {
     const roll = Math.random();
     const success = roll < encounterChance;
 
+    console.log(`🎮 Encounter check: ${(roll * 100).toFixed(1)}% roll vs ${(encounterChance * 100).toFixed(1)}% chance = ${success ? 'SUCCESS' : 'FAIL'}`);
+
     if (!success) {
       return {
         success: false,
@@ -36,32 +40,23 @@ export class PokemonGamificationService {
       };
     }
 
-    // Generate random Pokemon encounter
-    const pokemonEncounter = await this.generatePokemonEncounter(userId, encounterChance, stats.currentStreak);
+    // Generate random Pokemon ID for frontend to select from cache
+    const pokemonId = Math.floor(Math.random() * (this.MAX_POKEMON_ID - this.MIN_POKEMON_ID + 1)) + this.MIN_POKEMON_ID;
     
-    if (!pokemonEncounter) {
-      return {
-        success: false,
-        encounterChance: encounterChance * 100,
-        newStreak: stats.currentStreak
-      };
-    }
-
-    // Update stats with caught Pokemon
-    await UserPokemonStats.findOneAndUpdate(
-      { userId },
-      { 
-        $inc: { totalPokemonCaught: 1 },
-        currentEncounterRate: encounterChance
-      }
-    );
+    console.log(`🎮 Pokemon encounter successful! Generated Pokemon ID: ${pokemonId}`);
 
     return {
       success: true,
-      pokemonId: pokemonEncounter.pokemonId,
+      pokemonId: pokemonId,
       encounterChance: encounterChance * 100,
       newStreak: stats.currentStreak,
-      encounterData: pokemonEncounter.encounterData
+      encounterData: {
+        userId,
+        pokemonId,
+        caughtAt: new Date(),
+        encounterChance: encounterChance * 100,
+        applicationStreak: stats.currentStreak
+      }
     };
   }
 
@@ -123,36 +118,7 @@ export class PokemonGamificationService {
   }
 
   /**
-   * Generates a random Pokemon encounter (returns just the Pokemon ID to be fetched on frontend)
-   */
-  private static async generatePokemonEncounter(
-    userId: string, 
-    encounterChance: number, 
-    streak: number
-  ): Promise<{ pokemonId: number; encounterData: { userId: string; pokemonId: number; caughtAt: Date; encounterChance: number; applicationStreak: number } } | null> {
-    try {
-      // Generate random Pokemon ID
-      const pokemonId = Math.floor(Math.random() * (this.MAX_POKEMON_ID - this.MIN_POKEMON_ID + 1)) + this.MIN_POKEMON_ID;
-      
-      // Return the Pokemon ID and encounter metadata - frontend will fetch the actual Pokemon data
-      return {
-        pokemonId,
-        encounterData: {
-          userId,
-          pokemonId,
-          caughtAt: new Date(),
-          encounterChance: encounterChance * 100,
-          applicationStreak: streak
-        }
-      };
-    } catch (error) {
-      console.error('Error generating Pokemon encounter:', error);
-      return null;
-    }
-  }
-
-  /**
-   * Saves a caught Pokemon to the database (called after frontend fetches Pokemon data)
+   * Saves a caught Pokemon to the database (called after frontend selects Pokemon from cache)
    */
   static async saveCaughtPokemon(
     userId: string,

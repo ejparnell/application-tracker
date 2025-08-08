@@ -16,7 +16,7 @@ export async function POST(request: NextRequest) {
 
     console.log('🎮 Processing encounter for user:', session.user.id);
     
-    const encounter = await PokemonGamificationService.handleJobApplication(session.user.id);
+    const encounter = await PokemonGamificationService.triggerEncounter(session.user.id);
     
     console.log('🎮 Encounter result:', encounter);
     

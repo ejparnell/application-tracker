@@ -1,12 +1,17 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Application, ApplicationsResponse, ApplicationStats } from '@/types/applications';
 import type { PokemonEncounter } from '@/models/pokemon';
+import type { Pokemon } from '@/types/pokemon-types';
 
 interface FilterState {
   status: string;
   search: string;
   page: number;
   limit: number;
+}
+
+interface UseApplicationsProps {
+  getRandomPokemonFromCache?: (targetPokemonId?: number) => Pokemon | null;
 }
 
 interface UseApplicationsReturn {
@@ -21,7 +26,7 @@ interface UseApplicationsReturn {
   refreshApplications: () => Promise<void>;
 }
 
-export default function useApplications(): UseApplicationsReturn {
+export default function useApplications({ getRandomPokemonFromCache }: UseApplicationsProps = {}): UseApplicationsReturn {
   const [applications, setApplications] = useState<Application[]>([]);
   const [allStats, setAllStats] = useState<ApplicationStats | null>(null);
   const [filteredStats, setFilteredStats] = useState<ApplicationStats | null>(null);
@@ -131,63 +136,68 @@ export default function useApplications(): UseApplicationsReturn {
             console.log('🎮 Pokemon encounter result:', encounterResult);
             
             if (encounterResult.success && encounterResult.pokemonId) {
-              // Fetch Pokemon data from PokeAPI on frontend
-              console.log('🎮 Fetching Pokemon data for ID:', encounterResult.pokemonId);
-              try {
-                const pokemonDataResponse = await fetch(`https://pokeapi.co/api/v2/pokemon/${encounterResult.pokemonId}`);
-                if (pokemonDataResponse.ok) {
-                  const pokemonData = await pokemonDataResponse.json();
-                  console.log('🎮 Pokemon data fetched:', pokemonData.name);
+              // Try to get Pokemon data from cache first
+              console.log('🎮 Looking for Pokemon data in cache for ID:', encounterResult.pokemonId);
+              
+              let pokemonData = null;
+              if (getRandomPokemonFromCache) {
+                pokemonData = getRandomPokemonFromCache(encounterResult.pokemonId);
+              }
+              
+              if (pokemonData) {
+                console.log('🎮 Found Pokemon data in cache:', pokemonData.name);
+                
+                // Save the caught Pokemon to database
+                const saveResponse = await fetch('/api/pokemon/save', {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json',
+                  },
+                  body: JSON.stringify({
+                    pokemonId: encounterResult.pokemonId,
+                    pokemonData,
+                    encounterChance: encounterResult.encounterChance,
+                    streak: encounterResult.newStreak
+                  }),
+                });
+                
+                if (saveResponse.ok) {
+                  const saveResult = await saveResponse.json();
+                  console.log('🎮 Pokemon saved successfully:', saveResult.pokemon.name);
                   
-                  // Save the caught Pokemon to database
-                  const saveResponse = await fetch('/api/pokemon/save', {
-                    method: 'POST',
-                    headers: {
-                      'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                      pokemonId: encounterResult.pokemonId,
-                      pokemonData,
-                      encounterChance: encounterResult.encounterChance,
-                      streak: encounterResult.newStreak
-                    }),
-                  });
-                  
-                  if (saveResponse.ok) {
-                    const saveResult = await saveResponse.json();
-                    console.log('🎮 Pokemon saved successfully:', saveResult.pokemon.name);
-                    
-                    // Return the full encounter with Pokemon data
-                    pokemonEncounter = {
-                      success: true,
-                      pokemon: saveResult.pokemon,
-                      encounterChance: encounterResult.encounterChance,
-                      newStreak: encounterResult.newStreak
-                    };
-                  } else {
-                    // Failed to save Pokemon, but still show successful encounter
-                    pokemonEncounter = {
-                      success: true,
-                      pokemon: pokemonData,
-                      encounterChance: encounterResult.encounterChance,
-                      newStreak: encounterResult.newStreak
-                    };
-                  }
-                } else {
-                  console.error('🎮 Failed to fetch Pokemon data from PokeAPI');
-                  // Show encounter failed modal
+                  // Return the full encounter with Pokemon data
                   pokemonEncounter = {
-                    success: false,
-                    pokemon: null,
+                    success: true,
+                    pokemon: saveResult.pokemon,
+                    encounterChance: encounterResult.encounterChance,
+                    newStreak: encounterResult.newStreak
+                  };
+                } else {
+                  // Failed to save Pokemon, but still show successful encounter
+                  pokemonEncounter = {
+                    success: true,
+                    pokemon: {
+                      id: '',
+                      userId: '',
+                      pokemonId: pokemonData.id,
+                      name: pokemonData.name,
+                      sprite: pokemonData.sprites.other['official-artwork']?.front_default || pokemonData.sprites.front_default,
+                      types: pokemonData.types.map(t => t.type.name),
+                      height: pokemonData.height,
+                      weight: pokemonData.weight,
+                      caughtAt: new Date(),
+                      encounterChance: encounterResult.encounterChance,
+                      applicationStreak: encounterResult.newStreak
+                    },
                     encounterChance: encounterResult.encounterChance,
                     newStreak: encounterResult.newStreak
                   };
                 }
-              } catch (fetchError) {
-                console.error('🎮 Error fetching Pokemon data:', fetchError);
-                // Show encounter failed modal
+              } else {
+                console.warn('🎮 Pokemon data not found in cache, user needs to load Pokemon data first');
+                // Show encounter successful but no Pokemon data available
                 pokemonEncounter = {
-                  success: false,
+                  success: true,
                   pokemon: null,
                   encounterChance: encounterResult.encounterChance,
                   newStreak: encounterResult.newStreak

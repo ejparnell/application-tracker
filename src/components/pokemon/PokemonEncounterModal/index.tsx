@@ -99,6 +99,31 @@ export default function PokemonEncounterModal({
               </Button>
             </div>
           </div>
+        ) : success && !pokemon ? (
+          <div className={styles.failContent}>
+            <div className={styles.header}>
+              <h2 className={styles.title}>✨ Pokemon Encounter!</h2>
+              <button className={styles.closeButton} onClick={onClose}>×</button>
+            </div>
+            
+            <div className={styles.failMessage}>
+              <div className={styles.failIcon}>📚</div>
+              <p>You encountered a Pokemon, but need to load Pokemon data first!</p>
+              <p>Visit the Pokemon page and load some generations to catch Pokemon.</p>
+              <p className={styles.encounterText}>
+                Encounter rate: {encounterChance.toFixed(1)}%
+              </p>
+              <p className={styles.streakText}>
+                Application streak: {streak} day{streak !== 1 ? 's' : ''}
+              </p>
+            </div>
+            
+            <div className={styles.actions}>
+              <Button onClick={onClose} variant="primary">
+                Load Pokemon Data
+              </Button>
+            </div>
+          </div>
         ) : (
           <div className={styles.failContent}>
             <div className={styles.header}>

@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { fallbackPokemon, fallbackGeneration } from '@/data/fallback-pokemon';
 
 interface Pokemon {
   id: number;
@@ -137,6 +138,34 @@ export function usePokemon() {
       return generation;
     } catch (error) {
       console.error(`Error fetching generation ${genId}:`, error);
+      console.warn(`PokeAPI failed for generation ${genId}, using fallback data for Pokemon encounters`);
+      
+      // If this is generation 1 and we have fallback data, use it
+      if (genId === 1) {
+        const fallbackGenData: Generation = {
+          id: 1,
+          name: 'generation-i',
+          pokemon: fallbackPokemon.map(fp => ({
+            id: fp.id,
+            name: fp.name,
+            types: fp.types,
+            sprites: fp.sprites,
+            stats: [], // Empty stats for fallback
+            height: fp.height,
+            weight: fp.weight
+          }))
+        };
+        
+        // Cache the fallback data
+        pokemonCache.set(genId, {
+          data: fallbackGenData,
+          timestamp: Date.now()
+        });
+        
+        console.log(`🎮 Loaded fallback Pokemon data for encounters: ${fallbackGenData.pokemon.length} Pokemon available`);
+        return fallbackGenData;
+      }
+      
       setError(`Failed to fetch generation ${genId}`);
       return null;
     } finally {
@@ -178,12 +207,80 @@ export function usePokemon() {
     setGenerations([]);
   };
 
+  const getRandomPokemonFromCache = (targetPokemonId?: number): Pokemon | null => {
+    const allGenerations = Array.from(pokemonCache.values()).map(cached => cached.data);
+    
+    if (allGenerations.length === 0) {
+      console.warn('🎮 No Pokemon generations loaded in cache');
+      return null;
+    }
+
+    // Get all Pokemon from all loaded generations
+    const allPokemon: Pokemon[] = [];
+    allGenerations.forEach(generation => {
+      allPokemon.push(...generation.pokemon);
+    });
+
+    if (allPokemon.length === 0) {
+      console.warn('🎮 No Pokemon found in loaded generations');
+      return null;
+    }
+
+    // If a specific Pokemon ID is requested, try to find it first
+    if (targetPokemonId) {
+      const targetPokemon = allPokemon.find(p => p.id === targetPokemonId);
+      if (targetPokemon) {
+        console.log(`🎮 Found target Pokemon ${targetPokemon.name} (ID: ${targetPokemonId}) in cache`);
+        return targetPokemon;
+      } else {
+        console.warn(`🎮 Target Pokemon ID ${targetPokemonId} not found in cache, selecting random Pokemon instead`);
+      }
+    }
+
+    // Select a random Pokemon from the cache
+    const randomIndex = Math.floor(Math.random() * allPokemon.length);
+    const selectedPokemon = allPokemon[randomIndex];
+    
+    console.log(`🎮 Selected random Pokemon ${selectedPokemon.name} (ID: ${selectedPokemon.id}) from cache of ${allPokemon.length} Pokemon`);
+    return selectedPokemon;
+  };
+
+  // Initialize with fallback data if no Pokemon are cached
+  useEffect(() => {
+    if (pokemonCache.size === 0) {
+      console.log('🎮 No Pokemon in cache, loading fallback data for encounters...');
+      const fallbackGenData: Generation = {
+        id: 1,
+        name: 'generation-i',
+        pokemon: fallbackPokemon.map(fp => ({
+          id: fp.id,
+          name: fp.name,
+          types: fp.types,
+          sprites: fp.sprites,
+          stats: [], // Empty stats for fallback
+          height: fp.height,
+          weight: fp.weight
+        }))
+      };
+      
+      // Cache the fallback data
+      pokemonCache.set(1, {
+        data: fallbackGenData,
+        timestamp: Date.now()
+      });
+      
+      setGenerations([fallbackGenData]);
+      console.log(`🎮 Loaded fallback Pokemon data: ${fallbackGenData.pokemon.length} Pokemon available for encounters`);
+    }
+  }, []);
+
   return {
     generations,
     loading,
     error,
     loadGeneration,
     loadAllGenerations,
-    clearCache
+    clearCache,
+    getRandomPokemonFromCache
   };
 }
