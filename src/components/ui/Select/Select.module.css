@@ -1,1 +1,28 @@
-/* Select styles */
+.select {
+  width: 100%;
+  padding: var(--spacing-150) var(--spacing-200);
+  border: 1px solid var(--grey-300);
+  border-radius: var(--border-radius-100);
+  background-color: white;
+  font-family: inherit;
+  font-size: var(--font-size-200);
+  color: var(--primaryFontColor);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  cursor: pointer;
+}
+
+.select:focus {
+  outline: none;
+  border-color: var(--purple-200);
+  box-shadow: var(--shadow-focus);
+}
+
+.select:disabled {
+  background-color: var(--grey-100);
+  color: var(--grey-400);
+  cursor: not-allowed;
+}
+
+.select option {
+  padding: var(--spacing-100);
+}

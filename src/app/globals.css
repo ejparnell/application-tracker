@@ -110,3 +110,7 @@ body {
     --container-medium: 640px;
     --container-large: 1280px;
 }
+
+a {
+    text-decoration: none;
+}

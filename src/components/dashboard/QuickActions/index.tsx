@@ -35,6 +35,13 @@ export default function QuickActions() {
 
       const result: ImportResult = await response.json();
       setImportResult(result);
+      
+      // Trigger a page refresh to update all application lists
+      if (result.success && result.imported > 0) {
+        setTimeout(() => {
+          window.location.reload();
+        }, 2000);
+      }
     } catch (error) {
       console.error('Import error:', error);
       setImportResult({
@@ -49,12 +56,10 @@ export default function QuickActions() {
   };
 
   const handleNewApplication = () => {
-    // Navigate to new application page
     window.location.href = '/applications/new';
   };
 
   const handleViewApplications = () => {
-    // Navigate to applications page
     window.location.href = '/applications';
   };
 
@@ -106,6 +111,11 @@ export default function QuickActions() {
                 <Text variant="body-small" color="secondary">
                   Imported: {importResult.imported} • Skipped: {importResult.skipped}
                 </Text>
+                {importResult.imported > 0 && (
+                  <Text variant="body-small" color="secondary">
+                    Page will refresh in 2 seconds...
+                  </Text>
+                )}
               </div>
             )}
             

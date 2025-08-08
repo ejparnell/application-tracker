@@ -102,11 +102,18 @@ export async function GET(request: NextRequest) {
       hidden: 0,
       responseRate: 0,
       interviewRate: 0,
+      topCompanies: [] as Array<{ company: string; count: number }>,
+      topLocations: [] as Array<{ location: string; count: number }>,
+      applicationsByMonth: [] as Array<{ month: string; count: number }>,
     };
     
+    const statusFields = ['available', 'applied', 'interview', 'rejected', 'hidden'] as const;
+    
     stats.forEach((stat: { _id: string; count: number }) => {
-      formattedStats[stat._id as keyof typeof formattedStats] = stat.count;
-      formattedStats.total += stat.count;
+      if (stat._id && statusFields.includes(stat._id as typeof statusFields[number])) {
+        formattedStats[stat._id as typeof statusFields[number]] = stat.count;
+        formattedStats.total += stat.count;
+      }
     });
     
     if (formattedStats.applied > 0) {

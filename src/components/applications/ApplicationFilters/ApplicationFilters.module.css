@@ -1,1 +1,114 @@
-/* Filters styles */
+.filters {
+  background: white;
+  border-radius: var(--border-radius-100);
+  padding: var(--spacing-300);
+  box-shadow: var(--shadow-small);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-300);
+}
+
+.filterControls {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: var(--spacing-200);
+  align-items: end;
+}
+
+.searchSection {
+  display: flex;
+  flex-direction: column;
+}
+
+.statusSection {
+  display: flex;
+  flex-direction: column;
+}
+
+.searchInput {
+  margin: 0;
+}
+
+.statusSelect {
+  margin: 0;
+}
+
+.stats {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-200);
+  padding-top: var(--spacing-200);
+  border-top: 1px solid var(--grey-300);
+}
+
+.statsHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-100);
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+  gap: var(--spacing-200);
+}
+
+.statItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--spacing-050);
+}
+
+.rates {
+  text-align: center;
+  padding: var(--spacing-150);
+  background: var(--grey-100);
+  border-radius: var(--border-radius-050);
+}
+
+/* Color overrides for stats */
+.availableColor {
+  color: var(--grey-500) !important;
+}
+
+.appliedColor {
+  color: var(--green) !important;
+}
+
+.interviewColor {
+  color: var(--purple-200) !important;
+}
+
+.rejectedColor {
+  color: var(--red-300) !important;
+}
+
+.hiddenColor {
+  color: var(--grey-400) !important;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .filterControls {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-150);
+  }
+  
+  .statsGrid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--spacing-150);
+  }
+  
+  .statsHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-050);
+  }
+  
+  .filters {
+    padding: var(--spacing-200);
+  }
+}

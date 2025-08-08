@@ -1,1 +1,61 @@
-/* Badge styles */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-050);
+  padding: var(--spacing-050) var(--spacing-100);
+  border-radius: var(--border-radius-200);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border: 1px solid;
+}
+
+.medium {
+  padding: var(--spacing-100) var(--spacing-150);
+}
+
+.small {
+  padding: var(--spacing-050) var(--spacing-100);
+}
+
+.emoji {
+  font-size: 0.9em;
+}
+
+.label {
+  margin: 0;
+  font-weight: inherit;
+  text-transform: inherit;
+  letter-spacing: inherit;
+}
+
+/* Status-specific styles */
+.available {
+  background-color: rgba(136, 142, 176, 0.1);
+  border-color: var(--grey-400);
+  color: var(--grey-500);
+}
+
+.applied {
+  background-color: rgba(51, 214, 159, 0.1);
+  border-color: var(--green);
+  color: var(--green);
+}
+
+.interview {
+  background-color: rgba(124, 93, 250, 0.1);
+  border-color: var(--purple-200);
+  color: var(--purple-200);
+}
+
+.rejected {
+  background-color: rgba(236, 87, 87, 0.1);
+  border-color: var(--red-300);
+  color: var(--red-300);
+}
+
+.hidden {
+  background-color: rgba(126, 136, 195, 0.1);
+  border-color: var(--grey-400);
+  color: var(--grey-400);
+}

@@ -1,4 +1,4 @@
-import { Schema, models, model, Document, Model } from 'mongoose';
+import { Schema, models, model, Document, Model, Types } from 'mongoose';
 
 interface IApplication extends Document {
     id: number;
@@ -19,7 +19,7 @@ interface IApplication extends Document {
         rejected: boolean;
     };
     dateLoaded: string;
-    userId: Schema.Types.ObjectId;
+    userId: Types.ObjectId;
     appliedAt?: Date;
     interviewDate?: Date;
     notes?: string;
@@ -118,7 +118,7 @@ const ApplicationSchema = new Schema(
         },
         
         userId: {
-            type: Schema.Types.ObjectId,
+            type: Types.ObjectId,
             ref: 'User',
             required: true,
         },
@@ -199,7 +199,7 @@ ApplicationSchema.statics.findByStatus = function(userId: string, status: string
 
 ApplicationSchema.statics.getStats = function(userId: string) {
     return this.aggregate([
-        { $match: { userId: new Schema.Types.ObjectId(userId) } },
+        { $match: { userId: new Types.ObjectId(userId) } },
         {
             $group: {
                 _id: '$status',

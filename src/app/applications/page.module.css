@@ -1,0 +1,16 @@
+/* Mobile-specific styles for applications page */
+@media (max-width: 768px) {
+  .applicationPageHeader {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--spacing-300);
+  }
+  
+  .applicationPageHeader .headerText {
+    text-align: center;
+  }
+  
+  .applicationPageHeader .newApplicationButton {
+    align-self: stretch;
+  }
+}
