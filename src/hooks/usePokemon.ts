@@ -55,7 +55,15 @@ export function usePokemon() {
 
   const fetchPokemonData = async (id: number, retries = 2): Promise<Pokemon | null> => {
     try {
-      const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${id}`);
+      // Try HTTPS first, fallback to HTTP if SSL issues
+      let response;
+      try {
+        response = await fetch(`https://pokeapi.co/api/v2/pokemon/${id}`);
+      } catch (sslError) {
+        console.warn(`SSL error for Pokemon ${id}, trying HTTP:`, sslError instanceof Error ? sslError.message : 'Unknown SSL error');
+        response = await fetch(`http://pokeapi.co/api/v2/pokemon/${id}`);
+      }
+      
       if (!response.ok) {
         if (response.status === 404) {
           console.warn(`Pokemon ${id} not found`);
