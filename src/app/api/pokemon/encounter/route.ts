@@ -73,26 +73,26 @@ import { PokemonGamificationService } from '@/lib/pokemon-service';
  *       The frontend is responsible for selecting actual Pokemon data from cache
  *       and calling the save endpoint to persist caught Pokemon.
  */
-// export async function POST() {
-//   try {
-//     // Verify user authentication
-//     const session = await getServerSession(authOptions);
+export async function POST() {
+  try {
+    // Verify user authentication
+    const session = await getServerSession(authOptions);
     
-//     if (!session?.user?.id) {
-//       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-//     }
+    if (!session?.user?.id) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
     
-//     // Trigger Pokemon encounter calculation
-//     // This updates user stats, calculates encounter probability, and determines success
-//     // Only generates Pokemon ID - frontend handles actual Pokemon data selection from cache
-//     const encounter = await PokemonGamificationService.triggerEncounter(session.user.id);
+    // Trigger Pokemon encounter calculation
+    // This updates user stats, calculates encounter probability, and determines success
+    // Only generates Pokemon ID - frontend handles actual Pokemon data selection from cache
+    const encounter = await PokemonGamificationService.triggerEncounter(session.user.id);
     
-//     return NextResponse.json(encounter);
-//   } catch (error) {
-//     console.error('🎮 Error handling Pokemon encounter:', error);
-//     return NextResponse.json(
-//       { error: 'Failed to process Pokemon encounter' },
-//       { status: 500 }
-//     );
-//   }
-// }
+    return NextResponse.json(encounter);
+  } catch (error) {
+    console.error('🎮 Error handling Pokemon encounter:', error);
+    return NextResponse.json(
+      { error: 'Failed to process Pokemon encounter' },
+      { status: 500 }
+    );
+  }
+}
