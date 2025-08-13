@@ -1,14 +1,29 @@
 import { useState, useEffect } from 'react';
-import { fallbackPokemon, fallbackGeneration } from '@/data/fallback-pokemon';
+import { fallbackPokemon } from '@/data/fallback-pokemon';
 
+/**
+ * @fileoverview React hook and helpers for loading and caching Pokemon data
+ * from the PokeAPI with graceful fallbacks for offline or error scenarios.
+ *
+ * @author ejparnell
+ * @since 1.0.0
+ */
+
+/**
+ * Minimal representation of a Pokemon as returned by the PokeAPI.
+ */
 interface Pokemon {
+  /** Pokedex ID of the Pokemon. */
   id: number;
+  /** Pokemon species name. */
   name: string;
+  /** Pokemon type information. */
   types: Array<{
     type: {
       name: string;
     };
   }>;
+  /** Sprite images for the Pokemon. */
   sprites: {
     front_default: string;
     other: {
@@ -17,19 +32,28 @@ interface Pokemon {
       };
     };
   };
+  /** Base stats for the Pokemon. */
   stats: Array<{
     base_stat: number;
     stat: {
       name: string;
     };
   }>;
+  /** Height in decimetres. */
   height: number;
+  /** Weight in hectograms. */
   weight: number;
 }
 
+/**
+ * Representation of a Pokemon generation including all Pokemon loaded for it.
+ */
 interface Generation {
+  /** Numeric generation identifier. */
   id: number;
+  /** Human readable name for the generation. */
   name: string;
+  /** Pokemon belonging to the generation. */
   pokemon: Pokemon[];
 }
 
@@ -45,14 +69,28 @@ const GENERATION_RANGES = {
   9: { start: 906, end: 1025, name: "Generation IX (Paldea)" }
 };
 
-// In-memory cache for Pokemon data
+/** In-memory cache for Pokemon data mapped by generation. */
 const pokemonCache = new Map<number, { data: Generation; timestamp: number }>();
 
+/**
+ * Hook that provides Pokemon generation data and utilities for retrieving
+ * random Pokemon encounters. Data is cached in-memory to reduce API calls.
+ *
+ * @returns Object containing generation data and helper methods.
+ */
 export function usePokemon() {
   const [generations, setGenerations] = useState<Generation[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  /**
+   * Fetches Pokemon information by ID from the PokeAPI with simple retry
+   * and HTTP fallback behaviour.
+   *
+   * @param id - Pokedex ID of the Pokemon to fetch.
+   * @param retries - Number of retry attempts on failure.
+   * @returns Resolved Pokemon object or `null` if unavailable.
+   */
   const fetchPokemonData = async (id: number, retries = 2): Promise<Pokemon | null> => {
     try {
       // Try HTTPS first, fallback to HTTP if SSL issues
@@ -83,6 +121,13 @@ export function usePokemon() {
     }
   };
 
+  /**
+   * Loads an entire generation of Pokemon, utilising an in-memory cache
+   * that expires after 24 hours.
+   *
+   * @param genId - Numeric generation identifier to load.
+   * @returns Generation data or `null` if retrieval fails.
+   */
   const fetchGeneration = async (genId: number): Promise<Generation | null> => {
     // Check in-memory cache first
     const cached = pokemonCache.get(genId);
@@ -181,6 +226,12 @@ export function usePokemon() {
     }
   };
 
+  /**
+   * Loads a generation and merges it into state, replacing existing data
+   * if the generation is already present.
+   *
+   * @param genId - Generation identifier to load.
+   */
   const loadGeneration = async (genId: number) => {
     const generation = await fetchGeneration(genId);
     if (generation) {
@@ -194,6 +245,10 @@ export function usePokemon() {
     }
   };
 
+  /**
+   * Loads all generations sequentially, updating loading state and error
+   * handling appropriately.
+   */
   const loadAllGenerations = async () => {
     setLoading(true);
     setError(null);
@@ -210,11 +265,21 @@ export function usePokemon() {
     }
   };
 
+  /**
+   * Clears the in-memory cache and resets loaded generations.
+   */
   const clearCache = () => {
     pokemonCache.clear();
     setGenerations([]);
   };
 
+  /**
+   * Retrieves a random Pokemon from the loaded cache, optionally targeting
+   * a specific Pokemon by ID.
+   *
+   * @param targetPokemonId - Specific Pokemon ID to attempt to retrieve.
+   * @returns A Pokemon object or `null` if none are available.
+   */
   const getRandomPokemonFromCache = (targetPokemonId?: number): Pokemon | null => {
     const allGenerations = Array.from(pokemonCache.values()).map(cached => cached.data);
     

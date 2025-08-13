@@ -1,7 +1,23 @@
 import { CaughtPokemon, UserPokemonStats } from './pokemon-gamification';
 import { dbConnect } from './database';
-import type { PokemonEncounter, CaughtPokemon as CaughtPokemonType, UserPokemonStats as UserPokemonStatsType } from '@/models/pokemon';
+import type {
+  PokemonEncounter,
+  CaughtPokemon as CaughtPokemonType,
+  UserPokemonStats as UserPokemonStatsType
+} from '@/models/pokemon';
 
+/**
+ * @fileoverview Service encapsulating Pokemon encounter logic and user
+ * gamification statistics for job applications.
+ *
+ * @author ejparnell
+ * @since 1.0.0
+ */
+
+/**
+ * Provides utilities to trigger encounters, store captured Pokemon and
+ * retrieve statistics related to the gamification system.
+ */
 export class PokemonGamificationService {
   private static readonly BASE_ENCOUNTER_RATE = 0.15; // 15%
   private static readonly STREAK_BONUS = 0.05; // 5% per day
@@ -10,9 +26,12 @@ export class PokemonGamificationService {
   private static readonly MAX_POKEMON_ID = 1010;
 
   /**
-   * Handles a job application and potential Pokemon encounter
-   * This method only calculates encounter rates and returns the encounter result
-   * Frontend will handle Pokemon selection from cached data
+   * Handles a job application and calculates whether a Pokemon encounter
+   * occurs. The actual Pokemon selection is performed client-side using
+   * cached data.
+   *
+   * @param userId - Identifier of the user applying for a job.
+   * @returns Encounter result including chance and potential Pokemon data.
    */
   static async triggerEncounter(userId: string): Promise<PokemonEncounter> {
     await dbConnect();
@@ -61,7 +80,10 @@ export class PokemonGamificationService {
   }
 
   /**
-   * Updates user application stats and streak
+   * Updates the user's application statistics and streak values.
+   *
+   * @param userId - User identifier whose stats are updated.
+   * @returns Updated user Pokemon statistics document.
    */
   private static async updateUserStats(userId: string): Promise<UserPokemonStatsType> {
     const now = new Date();
@@ -118,21 +140,29 @@ export class PokemonGamificationService {
   }
 
   /**
-   * Saves a caught Pokemon to the database (called after frontend selects Pokemon from cache)
+   * Persists a caught Pokemon to the database after an encounter is
+   * resolved on the client.
+   *
+   * @param userId - ID of the user who caught the Pokemon.
+   * @param pokemonId - Numeric ID of the captured Pokemon.
+   * @param pokemonData - Detailed Pokemon data from the PokeAPI cache.
+   * @param encounterChance - Encounter probability used when catching.
+   * @param streak - User's application streak at capture time.
+   * @returns The saved {@link CaughtPokemonType} document.
    */
   static async saveCaughtPokemon(
     userId: string,
     pokemonId: number,
-    pokemonData: { 
-      id: number; 
-      name: string; 
-      sprites: { 
-        other: { 'official-artwork': { front_default: string } }; 
-        front_default: string; 
-      }; 
-      types: { type: { name: string } }[]; 
-      height: number; 
-      weight: number; 
+    pokemonData: {
+      id: number;
+      name: string;
+      sprites: {
+        other: { 'official-artwork': { front_default: string } };
+        front_default: string;
+      };
+      types: { type: { name: string } }[];
+      height: number;
+      weight: number;
     },
     encounterChance: number,
     streak: number
@@ -158,7 +188,10 @@ export class PokemonGamificationService {
   }
 
   /**
-   * Gets user's Pokemon collection
+   * Retrieves a user's caught Pokemon collection sorted by capture date.
+   *
+   * @param userId - ID of the user whose collection is requested.
+   * @returns Array of caught Pokemon documents.
    */
   static async getUserCollection(userId: string): Promise<CaughtPokemonType[]> {
     await dbConnect();
@@ -184,7 +217,10 @@ export class PokemonGamificationService {
   }
 
   /**
-   * Gets user's Pokemon stats
+   * Fetches gamification statistics for a given user.
+   *
+   * @param userId - User identifier.
+   * @returns User stats or `null` if none exist.
    */
   static async getUserStats(userId: string): Promise<UserPokemonStatsType | null> {
     await dbConnect();
@@ -205,7 +241,10 @@ export class PokemonGamificationService {
   }
 
   /**
-   * Gets collection statistics
+   * Computes aggregate statistics about a user's Pokemon collection.
+   *
+   * @param userId - ID of the user for whom stats are calculated.
+   * @returns Summary of collection metrics including totals and streaks.
    */
   static async getCollectionStats(userId: string) {
     await dbConnect();

@@ -4,7 +4,22 @@ import { Application } from '@/models/application';
 import { ApplicationData, JobApplication } from '@/types/applications';
 import { dbConnect } from '@/lib/database';
 
+/**
+ * @fileoverview Utility class for importing and exporting job application
+ * data to and from the application's MongoDB store.
+ *
+ * @author ejparnell
+ * @since 1.0.0
+ */
+
 export class ApplicationImporter {
+  /**
+   * Imports job applications from a JSON file on disk.
+   *
+   * @param filePath - Path to the JSON file to import.
+   * @param userId - User ID to associate the imported applications with.
+   * @returns Summary of the import process including counts and errors.
+   */
   static async importFromJSON(filePath: string, userId: string): Promise<{
     success: boolean;
     imported: number;
@@ -68,6 +83,13 @@ export class ApplicationImporter {
     return result;
   }
   
+  /**
+   * Imports job applications from an in-memory array of job records.
+   *
+   * @param jobs - Array of job application objects to import.
+   * @param userId - User ID to associate the applications with.
+   * @returns Summary of the import process.
+   */
   static async importFromArray(jobs: JobApplication[], userId: string): Promise<{
     success: boolean;
     imported: number;
@@ -125,6 +147,12 @@ export class ApplicationImporter {
     return result;
   }
   
+  /**
+   * Cleans HTML-laden job descriptions into Markdown-like plain text.
+   *
+   * @param description - Raw HTML job description.
+   * @returns Sanitized description limited to 5000 characters.
+   */
   static cleanDescription(description: string): string {
     return description
       .replace(/<br\s*\/?>/gi, '\n')
@@ -137,6 +165,14 @@ export class ApplicationImporter {
       .substring(0, 5000);
   }
   
+  /**
+   * Exports a user's applications to a JSON object and optionally writes
+   * it to disk.
+   *
+   * @param userId - User whose applications are exported.
+   * @param filePath - Optional file system path to write the JSON data to.
+   * @returns Structured application data ready for export.
+   */
   static async exportToJSON(userId: string, filePath?: string): Promise<ApplicationData> {
     await dbConnect();
     
@@ -181,6 +217,13 @@ export class ApplicationImporter {
     return exportData;
   }
   
+  /**
+   * Convenience method that imports applications from the `data.json` file
+   * located at the project root.
+   *
+   * @param userId - User ID to associate imported applications with.
+   * @returns Summary of the import process.
+   */
   static async migrateDataFromRoot(userId: string): Promise<{
     success: boolean;
     imported: number;

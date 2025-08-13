@@ -5,6 +5,19 @@ import { dbConnect } from './database';
 import { User } from '@/models/user';
 import { loginSchema } from '@/utils/schemas/auth-schema';
 
+/**
+ * @fileoverview Configuration for NextAuth.js authentication using a
+ * custom credentials provider backed by MongoDB.
+ *
+ * @author ejparnell
+ * @since 1.0.0
+ */
+
+/**
+ * NextAuth configuration that sets up credential-based authentication
+ * with email and password. Users are validated against the MongoDB
+ * `User` model and authenticated via bcrypt password comparison.
+ */
 export const authOptions: NextAuthOptions = {
     session: { strategy: 'jwt' },
     providers: [
